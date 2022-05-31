@@ -9,15 +9,10 @@ class Navbar extends React.Component {
           role="navigation"
           aria-label="main navigation"
         >
-          <div id="navbarBasicExample" className="navbar-menu">
-            <div className="navbar-start">
-              <a className="navbar-item">Home</a>
-            </div>
-            <div className="navbar-end">
-              <div className="navbar-item">
-                <a className="button is-link">Logout</a>
-              </div>
-            </div>
+          <div className="navbar-brand">
+            <a className="navbar-item">
+              <h1 className="is-size-5 has-text-weight-bold">LANChat</h1>
+            </a>
           </div>
         </nav>
       </React.Fragment>
