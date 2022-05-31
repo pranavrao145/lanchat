@@ -1,0 +1,19 @@
+.stick-to-bottom {
+  position: fixed;
+  bottom: 0;
+}
+
+.fullwidth {
+  width: 100%;
+}
+
+.h-87 {
+  height: 86.4vh;
+}
+
+.scrollable {
+  display: flex;
+  flex-direction: column-reverse;
+  max-height: 100vh;
+  overflow-y: auto;
+}
