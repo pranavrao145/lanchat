@@ -26,7 +26,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
   handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    sendMessage(this.state.username);
+    sendMessage("login", this.state.username);
   }
 
   render() {

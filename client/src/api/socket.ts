@@ -1,5 +1,10 @@
 const ws = new WebSocket("ws://localhost:8080/ws");
 
+interface IMessage {
+  page: string;
+  content: string;
+}
+
 const connect = () => {
   console.log("Attempting to connect to websocket...");
 
@@ -20,9 +25,15 @@ const connect = () => {
   };
 };
 
-const sendMessage = (message: string) => {
-  console.log(`Sending following message to localhost:8080: ${message}`);
-  ws.send(message);
+const sendMessage = (page: string, content: string) => {
+  console.log(`Sending following message to localhost:8080: ${content}`);
+
+  const message: IMessage = {
+    page: page,
+    content: content,
+  };
+
+  ws.send(JSON.stringify(message));
 };
 
 export { sendMessage, connect };
