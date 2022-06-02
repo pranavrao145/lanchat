@@ -2,6 +2,7 @@ package server
 
 import (
 	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -45,7 +46,7 @@ type Client struct {
 	conn *websocket.Conn
 
 	// Buffered channel of outbound messages.
-	send chan []byte
+	send chan *Message
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -62,14 +63,25 @@ func (c *Client) readPump() {
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		_, message, err := c.conn.ReadMessage()
+		_, rawMessageContent, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1)) // NOTE: this shows up as bytes, use string() to get the text
+		rawMessageContent = bytes.TrimSpace(bytes.Replace(rawMessageContent, newline, space, -1)) // NOTE: this shows up as bytes, use string() to get the text
+
+		message := &Message{}
+		err2 := json.Unmarshal([]byte(string(rawMessageContent)), message)
+
+		if err2 != nil {
+			if websocket.IsUnexpectedCloseError(err2, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("error: %v", err2)
+			}
+			break
+		}
+
 		c.hub.broadcast <- message
 	}
 }
@@ -99,13 +111,26 @@ func (c *Client) writePump() {
 			if err != nil {
 				return
 			}
-			w.Write(message)
+
+			msgEncoded, err := json.Marshal(message)
+
+			if err != nil {
+				log.Panicln("Error converting message struct to json.")
+				return
+			}
+
+			w.Write(msgEncoded)
 
 			// Add queued chat messages to the current websocket message.
 			n := len(c.send)
 			for i := 0; i < n; i++ {
 				w.Write(newline)
-				w.Write(<-c.send)
+				msgEncoded, err := json.Marshal(message)
+				if err != nil {
+					log.Panicln("Error converting message struct to json while queuing message.")
+					return
+				}
+				w.Write(msgEncoded)
 			}
 
 			if err := w.Close(); err != nil {
@@ -132,7 +157,7 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
+	client := &Client{hub: hub, conn: conn, send: make(chan *Message, 256)}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

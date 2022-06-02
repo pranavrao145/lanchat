@@ -9,6 +9,7 @@ interface ILoginState {
 class Login extends React.Component<ILoginProps, ILoginState> {
   constructor(props: ILoginProps) {
     super(props);
+
     connect();
 
     this.state = {
