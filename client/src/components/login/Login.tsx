@@ -1,6 +1,16 @@
 import React from "react";
+import { connect, sendMessage } from "../../api/socket";
 
 class Login extends React.Component {
+  constructor(props: any) {
+    super(props);
+    connect();
+  }
+
+  sendTestMessage() {
+    sendMessage("This is a test message.");
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -21,9 +31,12 @@ class Login extends React.Component {
                     </div>
                   </div>
                   <div className="field">
-                    <a className="button is-fullwidth is-link" href="#">
+                    <button
+                      className="button is-fullwidth is-link"
+                      onClick={this.sendTestMessage}
+                    >
                       Submit
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
