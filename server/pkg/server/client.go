@@ -124,6 +124,7 @@ func (c *Client) writePump() {
 
 // serveWs handles websocket requests from the peer.
 func ServeWs(hub *Hub, username string, w http.ResponseWriter, r *http.Request) {
+	log.Println("ServeWs") // __AUTO_GENERATED_PRINTF__
 	// don't check origin
 	upgrader.CheckOrigin = func(r *http.Request) bool {
 		return true

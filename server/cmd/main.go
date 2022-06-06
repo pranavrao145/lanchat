@@ -20,7 +20,6 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	http.ServeFile(w, r, "home.html")
 }
 
 func main() {
@@ -29,7 +28,14 @@ func main() {
 	go hub.Run()
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		server.ServeWs(hub, "username", w, r)
+		username, err := r.Cookie("username")
+
+		if err != nil {
+			log.Fatal("Unable to retrieve username from cookies.")
+			return
+		}
+
+		server.ServeWs(hub, username.Value, w, r)
 	})
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
