@@ -1,18 +1,20 @@
 import React from "react";
-import { connect, sendMessage } from "../../api/socket";
+import Cookies from "js-cookie";
+import { Navigate } from "react-router-dom";
 
 interface ILoginProps {}
 interface ILoginState {
   username: string;
+  confirmed: boolean;
 }
 
 class Login extends React.Component<ILoginProps, ILoginState> {
   constructor(props: ILoginProps) {
     super(props);
-    connect();
 
     this.state = {
       username: "",
+      confirmed: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -25,12 +27,14 @@ class Login extends React.Component<ILoginProps, ILoginState> {
 
   handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
-    sendMessage(this.state.username);
+    Cookies.set("username", this.state.username); // set a cookie containing a username
+    this.setState({ username: this.state.username, confirmed: true });
   }
 
   render() {
-    return (
+    return this.state.confirmed ? (
+      <Navigate to="/chat" />
+    ) : (
       <React.Fragment>
         <div className="section">
           <div className="container">
@@ -51,7 +55,10 @@ class Login extends React.Component<ILoginProps, ILoginState> {
                       </div>
                     </div>
                     <div className="field">
-                      <button className="button is-fullwidth is-link">
+                      <button
+                        type="submit"
+                        className="button is-fullwidth is-link"
+                      >
                         Submit
                       </button>
                     </div>
