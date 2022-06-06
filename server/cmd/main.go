@@ -29,7 +29,7 @@ func main() {
 	go hub.Run()
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		server.ServeWs(hub, w, r)
+		server.ServeWs(hub, "username", w, r)
 	})
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
