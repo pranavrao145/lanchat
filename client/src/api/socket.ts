@@ -1,3 +1,6 @@
+import { addMessage } from "../state/action-creaters";
+import store from "../state/store";
+
 const ws = new WebSocket("ws://localhost:8080/ws");
 
 const connect = () => {
@@ -12,7 +15,8 @@ const connect = () => {
   };
 
   ws.onmessage = (msg) => {
-    console.log(`Message received from localhost:8080: ${msg}`);
+    console.log(`Message received from localhost:8080: ${msg.data}`);
+    store.dispatch(addMessage(msg.data));
   };
 
   ws.onerror = (err) => {
