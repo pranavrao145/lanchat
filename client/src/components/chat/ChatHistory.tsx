@@ -1,7 +1,7 @@
 import React from "react";
-import "./Messages.css";
+import "./Chat.css";
 
-class MessageHistory extends React.Component {
+class ChatHistory extends React.Component {
   render() {
     return (
       <React.Fragment>
@@ -119,4 +119,4 @@ class MessageHistory extends React.Component {
   }
 }
 
-export default MessageHistory;
+export default ChatHistory;

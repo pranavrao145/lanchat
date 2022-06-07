@@ -12,7 +12,7 @@ const connect = () => {
   };
 
   ws.onmessage = (msg) => {
-    console.log(`Message received from localhost:8080: ${msg}`);
+    console.log(`Message received from localhost:8080: ${msg.data}`);
   };
 
   ws.onerror = (err) => {

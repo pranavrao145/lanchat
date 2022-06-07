@@ -1,25 +1,38 @@
 import React from "react";
 import { connect, sendMessage } from "../../api/socket";
-import MessageHistory from "./MessageHistory";
-import "./Messages.css";
+import ChatHistory from "./ChatHistory";
+import "./Chat.css";
+import Cookies from "js-cookie";
+import { Navigate } from "react-router-dom";
 
-interface IMessagesProps {}
-interface IMessagesState {
+interface IChatProps {}
+interface IChatState {
   message: string;
+  allowed: boolean;
 }
 
-class Messages extends React.Component<IMessagesProps, IMessagesState> {
-  constructor(props: IMessagesProps) {
+class Chat extends React.Component<IChatProps, IChatState> {
+  constructor(props: IChatProps) {
     super(props);
-
-    connect();
 
     this.state = {
       message: "",
+      allowed: true,
     };
+
+    connect();
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentWillMount() {
+    if (!Cookies.get("username")) {
+      this.setState({
+        message: "",
+        allowed: false,
+      });
+    }
   }
 
   handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -33,9 +46,9 @@ class Messages extends React.Component<IMessagesProps, IMessagesState> {
   }
 
   render() {
-    return (
+    return this.state.allowed ? (
       <React.Fragment>
-        <MessageHistory />
+        <ChatHistory />
         <div className="box stick-to-bottom fullwidth">
           <div className="field">
             <form onSubmit={this.handleSubmit}>
@@ -62,8 +75,10 @@ class Messages extends React.Component<IMessagesProps, IMessagesState> {
           </div>
         </div>
       </React.Fragment>
+    ) : (
+      <Navigate to="/" />
     );
   }
 }
 
-export default Messages;
+export default Chat;

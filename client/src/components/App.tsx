@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./login/Login";
 import Navbar from "./navbar/Navbar";
-import Messages from "./messages/Messages";
+import Chat from "./chat/Chat";
 
 class App extends React.Component {
   render() {
@@ -12,7 +12,7 @@ class App extends React.Component {
             <Router>
               <Routes>
                 <Route path="/" element={<Login />} />
-                <Route path="/chat" element={<Messages />} />
+                <Route path="/chat" element={<Chat />} />
               </Routes>
             </Router>
       </React.Fragment>
