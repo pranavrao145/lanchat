@@ -5,19 +5,12 @@ interface IChatMessageProps {
   message: string;
 }
 
-interface IChatMessageState {}
-
-class ChatMessage extends React.Component<
-  IChatMessageProps,
-  IChatMessageState
-> {
-  render() {
-    return (
-      <React.Fragment>
-        <div className="box">{this.props.message}</div>
-      </React.Fragment>
-    );
-  }
-}
+const ChatMessage = (props: IChatMessageProps) => {
+  return (
+    <React.Fragment>
+      <div className="box">{props.message}</div>
+    </React.Fragment>
+  );
+};
 
 export default ChatMessage;
