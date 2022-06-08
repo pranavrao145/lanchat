@@ -35,13 +35,11 @@ var upgrader = websocket.Upgrader{
 
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
-	// the username of this client
-	username string
 	// hub this client is registered to
 	hub *Hub
 
-	// name of this client
-	name string
+	// username of this client
+	username string
 
 	// The websocket connection.
 	conn *websocket.Conn
