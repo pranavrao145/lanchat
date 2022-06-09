@@ -9,7 +9,7 @@ const Navbar = () => {
         aria-label="main navigation"
       >
         <div className="navbar-brand">
-          <a className="navbar-item">
+          <a className="navbar-item" href="#">
             <h1 className="is-size-5 has-text-weight-bold">LANChat</h1>
           </a>
         </div>

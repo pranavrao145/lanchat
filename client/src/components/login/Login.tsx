@@ -21,7 +21,7 @@ const Login = () => {
     if (confirmed) {
       navigate("/chat");
     }
-  });
+  }, [navigate, confirmed]);
 
   return (
     <React.Fragment>

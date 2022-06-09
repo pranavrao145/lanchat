@@ -24,6 +24,9 @@ func main() {
 
 		server.ServeWs(hub, username.Value, w, r)
 	})
+
+  log.Println("Starting server...")
+
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
