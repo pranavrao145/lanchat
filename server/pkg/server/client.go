@@ -2,6 +2,7 @@ package server
 
 import (
 	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -35,19 +36,17 @@ var upgrader = websocket.Upgrader{
 
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
-	// the username of this client
-	username string
 	// hub this client is registered to
 	hub *Hub
 
-	// name of this client
-	name string
+	// username of this client
+	username string
 
 	// The websocket connection.
 	conn *websocket.Conn
 
 	// Buffered channel of outbound messages.
-	send chan []byte
+	send chan *OutgoingMessage
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -64,14 +63,20 @@ func (c *Client) readPump() {
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		_, message, err := c.conn.ReadMessage()
+		_, messageText, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1)) // NOTE: this shows up as bytes, use string() to get the text
+		messageText = bytes.TrimSpace(bytes.Replace(messageText, newline, space, -1)) // NOTE: this shows up as bytes, use string() to get the text
+
+		message := &OutgoingMessage{
+			Username: c.username,
+			Text:     string(messageText),
+		}
+
 		c.hub.broadcast <- message
 	}
 }
@@ -101,13 +106,26 @@ func (c *Client) writePump() {
 			if err != nil {
 				return
 			}
-			w.Write(message)
+
+			jsonifiedMessage, err := json.Marshal(message)
+
+			if err != nil {
+				log.Fatal("Unable to convert message to JSON.")
+			}
+
+			w.Write(jsonifiedMessage)
 
 			// Add queued chat messages to the current websocket message.
 			n := len(c.send)
 			for i := 0; i < n; i++ {
 				w.Write(newline)
-				w.Write(<-c.send)
+				jsonifiedMessage, err := json.Marshal(<-c.send)
+
+				if err != nil {
+					log.Fatal("Unable to convert send channel contents to JSON.")
+				}
+
+				w.Write(jsonifiedMessage)
 			}
 
 			if err := w.Close(); err != nil {
@@ -136,7 +154,7 @@ func ServeWs(hub *Hub, username string, w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	client := &Client{username: username, hub: hub, conn: conn, send: make(chan []byte, 256)}
+	client := &Client{username: username, hub: hub, conn: conn, send: make(chan *OutgoingMessage, 256)}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

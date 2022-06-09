@@ -1,9 +1,12 @@
 import { addMessage } from "../state/action-creaters";
 import store from "../state/store";
+import { IChatMessage } from "./message";
 
-const ws = new WebSocket("ws://localhost:8080/ws");
+let ws: WebSocket;
 
 const connect = () => {
+  ws = new WebSocket("ws://localhost:8080/ws");
+
   console.log("Attempting to connect to websocket...");
 
   ws.onopen = () => {
@@ -16,7 +19,9 @@ const connect = () => {
 
   ws.onmessage = (msg) => {
     console.log(`Message received from localhost:8080: ${msg.data}`);
-    store.dispatch(addMessage(msg.data));
+    const message: IChatMessage = JSON.parse(msg.data);
+
+    store.dispatch(addMessage(message));
   };
 
   ws.onerror = (err) => {
@@ -25,8 +30,12 @@ const connect = () => {
 };
 
 const sendMessage = (message: string) => {
-  console.log(`Sending following message to localhost:8080: ${message}`);
-  ws.send(message);
+  if (ws) {
+    console.log(`Sending following message to localhost:8080: ${message}`);
+    ws.send(message);
+  } else {
+    console.error(`WebSocket connection not initialized yet!`);
+  }
 };
 
 export { sendMessage, connect };

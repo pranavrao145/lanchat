@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Chat = () => {
   const [message, setMessage] = React.useState("");
   const navigate = useNavigate();
+  const username = Cookies.get("username");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
@@ -16,16 +17,20 @@ const Chat = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    sendMessage(message);
+    if (message !== "") {
+      sendMessage(message);
+      setMessage("");
+    }
   };
 
   useEffect(() => {
-    if (!Cookies.get("username")) {
+    if (!username) {
       navigate("/");
+      return;
     }
 
     connect();
-  }, [navigate]);
+  }, [navigate, username]);
 
   return (
     <React.Fragment>
@@ -41,6 +46,7 @@ const Chat = () => {
                       className="input"
                       type="text"
                       placeholder="Enter a message"
+                      value={message}
                       onChange={handleChange}
                     />
                   </div>
