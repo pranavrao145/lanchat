@@ -17,7 +17,10 @@ const Chat = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    sendMessage(message);
+    if (message !== "") {
+      sendMessage(message);
+      setMessage("");
+    }
   };
 
   useEffect(() => {
@@ -43,6 +46,7 @@ const Chat = () => {
                       className="input"
                       type="text"
                       placeholder="Enter a message"
+                      value={message}
                       onChange={handleChange}
                     />
                   </div>

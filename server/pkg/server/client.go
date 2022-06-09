@@ -107,14 +107,12 @@ func (c *Client) writePump() {
 				return
 			}
 
-			log.Println(string(message.Text))
 			jsonifiedMessage, err := json.Marshal(message)
 
 			if err != nil {
 				log.Fatal("Unable to convert message to JSON.")
 			}
 
-			log.Println(string(jsonifiedMessage))
 			w.Write(jsonifiedMessage)
 
 			// Add queued chat messages to the current websocket message.
