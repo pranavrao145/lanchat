@@ -1,9 +1,11 @@
 import { addMessage } from "../state/action-creaters";
 import store from "../state/store";
 
-const ws = new WebSocket("ws://localhost:8080/ws");
+let ws: WebSocket;
 
 const connect = () => {
+  ws = new WebSocket("ws://localhost:8080/ws");
+
   console.log("Attempting to connect to websocket...");
 
   ws.onopen = () => {
@@ -25,8 +27,12 @@ const connect = () => {
 };
 
 const sendMessage = (message: string) => {
-  console.log(`Sending following message to localhost:8080: ${message}`);
-  ws.send(message);
+  if (ws) {
+    console.log(`Sending following message to localhost:8080: ${message}`);
+    ws.send(message);
+  } else {
+    console.error(`WebSocket connection not initialized yet!`);
+  }
 };
 
 export { sendMessage, connect };

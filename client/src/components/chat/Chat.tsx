@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Chat = () => {
   const [message, setMessage] = React.useState("");
   const navigate = useNavigate();
+  const username = Cookies.get("username");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
@@ -20,12 +21,13 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (!Cookies.get("username")) {
+    if (!username) {
       navigate("/");
+      return;
     }
 
     connect();
-  }, [navigate]);
+  }, [navigate, username]);
 
   return (
     <React.Fragment>
