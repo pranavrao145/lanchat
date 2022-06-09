@@ -1,5 +1,6 @@
 import { addMessage } from "../state/action-creaters";
 import store from "../state/store";
+import { IChatMessage } from "./message";
 
 let ws: WebSocket;
 
@@ -18,7 +19,9 @@ const connect = () => {
 
   ws.onmessage = (msg) => {
     console.log(`Message received from localhost:8080: ${msg.data}`);
-    store.dispatch(addMessage(msg.data));
+    const message: IChatMessage = JSON.parse(msg.data);
+
+    store.dispatch(addMessage(message));
   };
 
   ws.onerror = (err) => {
