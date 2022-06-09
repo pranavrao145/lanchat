@@ -25,7 +25,7 @@ const Chat = () => {
     }
 
     connect();
-  }, []);
+  }, [navigate]);
 
   return (
     <React.Fragment>
