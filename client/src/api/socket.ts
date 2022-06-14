@@ -5,20 +5,20 @@ import { IChatMessage } from "./message";
 let ws: WebSocket;
 
 const connect = () => {
-  ws = new WebSocket("ws://localhost:8080/ws");
+  ws = new WebSocket(process.env.REACT_APP_SERVER_URL!);
 
   console.log("Attempting to connect to websocket...");
 
   ws.onopen = () => {
-    console.log("Succesfully connected to localhost:8080.");
+    console.log(`Succesfully connected to ${ws.url}.`);
   };
 
   ws.onclose = (event) => {
-    console.log(`Connection to localhost:8080 closed. event message: ${event}`);
+    console.log(`Connection to ${ws.url} closed. event message: ${event}`);
   };
 
   ws.onmessage = (msg) => {
-    console.log(`Message received from localhost:8080: ${msg.data}`);
+    console.log(`Message received from ${ws.url}: ${msg.data}`);
     const message: IChatMessage = JSON.parse(msg.data);
 
     store.dispatch(addMessage(message));
@@ -31,7 +31,7 @@ const connect = () => {
 
 const sendMessage = (message: string) => {
   if (ws) {
-    console.log(`Sending following message to localhost:8080: ${message}`);
+    console.log(`Sending following message to ${ws.url}: ${message}`);
     ws.send(message);
   } else {
     console.error(`WebSocket connection not initialized yet!`);
