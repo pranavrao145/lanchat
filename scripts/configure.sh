@@ -1,8 +1,7 @@
 #!/bin/bash
 
-CURRENT_IP="$(hostname -i | tr -s ' ' | cut -d ' ' -f 1)"
+echo "Configuring LANChat..."
 
-echo "REACT_APP_SERVER_URL=\"ws://$CURRENT_IP:8080/ws\"" > client/.env.local
+docker network create --subnet=172.19.0.0/16 lanchat_net 2> /dev/null
 
-echo "LANChat configured. You can run the app by executing the following command:"
-echo "./scripts/start.sh"
+echo "App setup complete. Run \"make run\" to run the application."

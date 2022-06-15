@@ -5,7 +5,7 @@ import { IChatMessage } from "./message";
 let ws: WebSocket;
 
 const connect = () => {
-  ws = new WebSocket(process.env.REACT_APP_SERVER_URL!);
+  ws = new WebSocket("ws://172.19.0.5:8080/ws");
 
   console.log("Attempting to connect to websocket...");
 
