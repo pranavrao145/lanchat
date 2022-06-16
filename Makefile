@@ -1,4 +1,4 @@
-setup: configure build
+setup: reset configure build
 
 all: reset setup run
 
@@ -11,6 +11,8 @@ configure:
 	@echo "LANChat configured successfully."
 
 build:
+	@echo "Updating local repository..."
+	git pull origin master
 	@echo "Building LANChat..."
 	docker-compose build
 	@echo "LANChat built successfully."

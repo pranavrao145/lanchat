@@ -1,5 +1,6 @@
 services:
   server:
+    image: pranavrao145/lanchat_server
     build: ./server
     ports:
       - "8080:8080"
@@ -7,6 +8,7 @@ services:
   client:
     depends_on:
       - server
+    image: pranavrao145/lanchat_client
     build:
       context: ./client
       args:
