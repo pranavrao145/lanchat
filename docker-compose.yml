@@ -3,9 +3,14 @@ services:
     build: ./server
     ports:
       - "8080:8080"
+    container_name: lanchat_server
   client:
     depends_on:
       - server
-    build: ./client
+    build:
+      context: ./client
+      args:
+        REACT_APP_SERVER_URL: ${REACT_APP_SERVER_URL}
     ports:
       - "3000:3000"
+    container_name: lanchat_client
