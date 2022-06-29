@@ -38,6 +38,13 @@ and **clone this repository**:
 git clone https://github.com/pranavrao145/lanchat.git
 ```
 
+Then, run the setup for the app by executing the following command in the
+terminal:
+
+```
+make setup
+```
+
 ## To Run Each Time
 
 To run this app each time, you must **open a new terminal** and **change into
